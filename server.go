@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"protocol"
 )
 
 func main() {
@@ -22,12 +23,12 @@ func main() {
 		}
 
 		Log(conn.RemoteAddr().String(), " tcp connect success")
-		handleConnection(conn)
+		go handleConnection(conn)
 	}
 }
 
 //处理连接
-func handleConnection(conn net.Conn) {
+func handleConnection1(conn net.Conn) {
 
 	buffer := make([]byte, 2048)
 
@@ -45,6 +46,41 @@ func handleConnection(conn net.Conn) {
 	}
 
 }
+
+//处理连接
+func handleConnection(conn net.Conn) {
+
+	// 缓冲区，存储被截断的数据
+	tmpBuffer := make([]byte, 0)
+
+	//接收解包
+	readerChannel := make(chan []byte, 16)
+	go reader(readerChannel)
+
+	buffer := make([]byte, 1024)
+	for {
+		n, err := conn.Read(buffer)
+
+		if err != nil {
+			Log(conn.RemoteAddr().String(), " connection error: ", err)
+			return
+		}
+
+		tmpBuffer = protocol.Depack(append(tmpBuffer, buffer[:n]...), readerChannel)
+	}
+	defer conn.Close()
+
+}
+
+func reader(readerChannel chan []byte) {
+	for {
+		select {
+		case data := <-readerChannel:
+			Log(string(data))
+		}
+	}
+}
+
 func Log(v ...interface{}) {
 	log.Println(v...)
 }
@@ -55,4 +91,3 @@ func CheckError(err error) {
 		os.Exit(1)
 	}
 }
-
