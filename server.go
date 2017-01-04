@@ -1,6 +1,8 @@
 package main
 
 import (
+	_ "controller"
+
 	"fmt"
 	"log"
 	"net"
@@ -140,8 +142,7 @@ func reader(readerChannel chan []byte) {
 	for {
 		select {
 		case data := <-readerChannel:
-			Log("depack data:")
-			Log(string(data))
+			Log("depack data:" + string(data))
 		}
 	}
 }

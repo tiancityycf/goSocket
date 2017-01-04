@@ -29,7 +29,8 @@ func send2(conn net.Conn) {
 
 func senderLong(conn net.Conn) {
 	for i := 0; i < 5; i++ {
-		words := strconv.Itoa(i) + "testlong"
+		session := GetSession()
+		words := "{\"ID\":" + strconv.Itoa(i) + "\",\"Session\":" + session + "2015073109532345\",\"Meta\":\"login\",\"Content\":\"message\"}"
 		conn.Write(protocol.Enpack([]byte(words)))
 		time.Sleep(2 * time.Second)
 	}

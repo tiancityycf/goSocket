@@ -3,8 +3,8 @@ package router
 import "fmt"
 
 type Msg struct {
-	Conditions map[string]interface{} `json:"meta"`
-	Content    interface{}            `json:"content"`
+	Meta    map[string]interface{} `json:"meta"`
+	Content interface{}            `json:"content"`
 }
 
 type Controller interface {
@@ -21,6 +21,7 @@ func Route(judge interface{}, controller Controller) {
 			arr[0] = judge
 			arr[1] = controller
 			routers = append(routers, arr)
+			fmt.Println(routers)
 		}
 	case map[string]interface{}:
 		{
@@ -37,7 +38,7 @@ func Route(judge interface{}, controller Controller) {
 				return true
 			}
 			var arr [2]interface{}
-			arr[0] = defaultjudge
+			arr[0] = defaultJudge
 			arr[1] = controller
 			routers = append(routers, arr)
 			fmt.Println(routers)

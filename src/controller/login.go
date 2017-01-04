@@ -3,23 +3,26 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
-	"route"
+	"router"
 )
 
 type LoginController struct {
+	router.Controller
 }
 
-func (this *LoginController) Excute(message Msg) []byte {
-	mirrormsg, err := json.Marshal(message)
+func (this *LoginController) Excute(message router.Msg) []byte {
+	msg, err := json.Marshal(message)
 	CheckError(err)
-	return mirrormsg
+	return msg
 }
 
 func init() {
+	log.Println("controller init start")
 	var login LoginController
-	routers = make([][2]interface{}, 0, 20)
-	route.Route(func(entry Msg) bool {
+	//routers := make([][2]interface{}, 0, 20)
+	router.Route(func(entry router.Msg) bool {
 		if entry.Meta["msgtype"] == "login" {
 			return true
 		}
